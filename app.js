@@ -7,12 +7,20 @@ document.addEventListener('DOMContentLoaded', () => {
   for (let i = 0; i < cellNum; i++) {
     htmlElements += '<div></div>'
   }
-  for (let i = 0; i< colNum; i++) {
+  for (let i = 0; i < colNum; i++) {
     htmlElements += '<div class="taken"></div>'
+  }
+
+  let miniGridHtml = ''
+  for(let i = 0; i < 16; i++) {
+    miniGridHtml += '<div></div>'
   }
 
   const grid = document.querySelector('.grid')
   grid.innerHTML = htmlElements
+
+  const miniGrid = document.querySelector('.mini-grid')
+  miniGrid.innerHTML = miniGridHtml
 
   let cells = Array.from(document.querySelectorAll('.grid div'))
   const scoreDisplay = document.getElementById('score')
@@ -59,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentRotation = 0
   let random = Math.floor(Math.random() * tetrominoes.length)
   let current = tetrominoes[random][currentRotation]
+  let nextRandom = 0
 
   // draw tetromino
   function draw () {
@@ -73,11 +82,10 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }
 
-  draw()
   let timerId = setInterval(moveDown, 1000)
 
-  //assign functions to keycodes
-  function control(e) {
+  // assign functions to keycodes
+  function control (e) {
     if (e.keyCode === 37)
       moveLeft()
     else if (e.keyCode === 38)
@@ -102,11 +110,13 @@ document.addEventListener('DOMContentLoaded', () => {
       current.forEach(index => cells[currentPosition + index].classList.add('taken'))
 
       // start a new tetromino
-      random = Math.floor(Math.random() * tetrominoes.length)
+      random = nextRandom
+      nextRandom = Math.floor(Math.random() * tetrominoes.length)
       currentPosition = 4
       currentRotation = 0
       current = tetrominoes[random][currentRotation]
       draw()
+      displayShape()
     }
   }
 
@@ -141,4 +151,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     draw()
   }
+
+  // display next tetromino
+  const displaySquares = document.querySelectorAll('.mini-grid div')
+  const displayWidth = 4
+  let displayIndex = 0
+
+  const upNextTetrominoes = [
+    tetrominoes[0][0],
+    tetrominoes[1][0],
+    tetrominoes[2][0],
+    tetrominoes[3][0],
+    tetrominoes[4][0]
+  ]
+
+  function displayShape() {
+    displaySquares.forEach(cell => {
+      cell.classList.remove('tetromino')
+    })
+    upNextTetrominoes[nextRandom].forEach( index => {
+      displaySquares[displayIndex + index].classList.add('tetromino')
+    })
+  }
+
+  // add functionality to the button
 })
