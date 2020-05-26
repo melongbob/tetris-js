@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
   for (let i = 0; i < cellNum; i++) {
     htmlElements += '<div></div>'
   }
+  for (let i = 0; i< colNum; i++) {
+    htmlElements += '<div class="taken"></div>'
+  }
 
   const grid = document.querySelector('.grid')
   grid.innerHTML = htmlElements
@@ -54,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let currentPosition = 4
   let currentRotation = 0
-  let random = Math.floor(Math.random()*tetrominoes.length)
+  let random = Math.floor(Math.random() * tetrominoes.length)
   let current = tetrominoes[random][currentRotation]
 
   // draw tetromino
@@ -68,5 +71,28 @@ document.addEventListener('DOMContentLoaded', () => {
     current.forEach(index => {
       cells[currentPosition + index].classList.remove('tetromino')
     })
+  }
+
+  draw()
+  let timerId = setInterval(moveDown, 1000)
+
+  function moveDown () {
+    undraw()
+    currentPosition += colNum
+    draw()
+    freeze()
+  }
+
+  function freeze () {
+    if (current.some(index => cells[currentPosition + index + colNum].classList.contains('taken'))) {
+      current.forEach(index => cells[currentPosition + index].classList.add('taken'))
+
+      // start a new tetromino
+      random = Math.floor(Math.random() * tetrominoes.length)
+      currentPosition = 4
+      currentRotation = 0
+      current = tetrominoes[random][currentRotation]
+      draw()
+    }
   }
 })
