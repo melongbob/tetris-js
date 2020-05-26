@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const startButton = document.getElementById('start-button')
   let nextRandom = 0
   let timerId
+  let score = 0
 
   const lTetromino = [
     [1, colNum + 1, colNum * 2 + 1, 2],
@@ -63,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     [0, colNum, colNum + 1, colNum * 2 + 1]
   ]
 
-  const tetrominoes = [lTetromino, zTetromino, tTetromino, oTetromino, iTetromino]
+  const tetrominoes = [lTetromino, oTetromino, tTetromino, iTetromino, zTetromino]
 
   let currentPosition = 4
   let currentRotation = 0
@@ -116,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
       current = tetrominoes[random][currentRotation]
       draw()
       displayShape()
+      addScore()
     }
   }
 
@@ -185,4 +187,22 @@ document.addEventListener('DOMContentLoaded', () => {
       displayShape()
     }
   })
+
+  function addScore () {
+    for (let i = 0; i < cellNum; i += colNum) {
+      const row = [i, i+1, i+2, i+3, i+4, i+5, i+6, i+7, i+8, i+9]
+
+      if (row.every(index => cells[index].classList.contains('taken'))) {
+        score += 10
+        scoreDisplay.innerHTML = score
+        row.forEach(index => {
+          cells[index].classList.remove('taken')
+          cells[index].classList.remove('tetromino')
+        })
+        const cellsRemoved = cells.splice(i, colNum)
+        cells = cellsRemoved.concat(cells)
+        cells.forEach(cell => grid.appendChild(cell))
+      }
+    }
+  }
 })
