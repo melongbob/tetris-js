@@ -76,6 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
   draw()
   let timerId = setInterval(moveDown, 1000)
 
+  //assign functions to keycodes
+
   function moveDown () {
     undraw()
     currentPosition += colNum
@@ -95,4 +97,18 @@ document.addEventListener('DOMContentLoaded', () => {
       draw()
     }
   }
+
+  function moveLeft() {
+    undraw()
+    const isAtLeftEdge = current.some(index => (currentPosition + index) % colNum === 0)
+
+    if (!isAtLeftEdge)
+      currentPosition -= 1
+
+    if (current.some(index => cells[currentPosition + index].classList.contains('taken')))
+      currentPosition += 1
+
+    draw()
+  }
+
 })
