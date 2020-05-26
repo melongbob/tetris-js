@@ -28,6 +28,13 @@ document.addEventListener('DOMContentLoaded', () => {
   let nextRandom = 0
   let timerId
   let score = 0
+  const colors = [
+    'orange',
+    'red',
+    'purple',
+    'green',
+    'blue'
+  ]
 
   const lTetromino = [
     [1, colNum + 1, colNum * 2 + 1, 2],
@@ -75,12 +82,14 @@ document.addEventListener('DOMContentLoaded', () => {
   function draw () {
     current.forEach(index => {
       cells[currentPosition + index].classList.add('tetromino')
+      cells[currentPosition + index].style.backgroundColor = colors[random]
     })
   }
 
   function undraw () {
     current.forEach(index => {
       cells[currentPosition + index].classList.remove('tetromino')
+      cells[currentPosition + index].style.backgroundColor = ''
     })
   }
 
@@ -118,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
       draw()
       displayShape()
       addScore()
+      gameOver()
     }
   }
 
@@ -169,9 +179,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function displayShape() {
     displaySquares.forEach(cell => {
       cell.classList.remove('tetromino')
+      cell.style.backgroundColor = ''
     })
     upNextTetrominoes[nextRandom].forEach(index => {
       displaySquares[displayIndex + index].classList.add('tetromino')
+      displaySquares[displayIndex + index].style.backgroundColor = colors[nextRandom]
     })
   }
 
@@ -188,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
 
-  function addScore () {
+  function addScore() {
     for (let i = 0; i < cellNum; i += colNum) {
       const row = [i, i+1, i+2, i+3, i+4, i+5, i+6, i+7, i+8, i+9]
 
@@ -198,11 +210,19 @@ document.addEventListener('DOMContentLoaded', () => {
         row.forEach(index => {
           cells[index].classList.remove('taken')
           cells[index].classList.remove('tetromino')
+          cells[index].style.backgroundColor = ''
         })
         const cellsRemoved = cells.splice(i, colNum)
         cells = cellsRemoved.concat(cells)
         cells.forEach(cell => grid.appendChild(cell))
       }
+    }
+  }
+
+  function gameOver() {
+    if(current.some(index => cells[currentPosition + index].classList.contains('taken'))) {
+      scoreDisplay.innerHTML = 'end'
+      clearInterval(timerId)
     }
   }
 })
